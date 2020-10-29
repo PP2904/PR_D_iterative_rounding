@@ -313,11 +313,6 @@ int main() {
         cout << " | ";
     }
 
-    /*//gibt mir nicht die initialen utility wert, sondern die vom ende (=max_utility) aus ?!
-    for(int b=0; b< num_bidders; ++b) {
-        cout << val_start[b] << endl;
-    }*/
-
 
     cout << " \n ";
     cout << "Money spend for good: ";
@@ -360,22 +355,6 @@ int main() {
     }
 
 
-
-
-
-
-
-    /*** wie kann ich genau die Werte ausgeben der valuations, die ungleich 0 sind? ***//*
-    cout << " \n ";
-    cout << "Filter: ";
-    for(int i=0; i < num_bidders; ++i) {
-        for (int j=0; j < num_goods; ++j) {
-            if (graph[i][j]==1) {
-                cout << bidders[i].valuation[j] << " ";
-            }
-        }
-    }
-*/
     return 0;
 
 }
