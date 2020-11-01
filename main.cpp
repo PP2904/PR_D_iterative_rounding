@@ -268,6 +268,23 @@ int main() {
                 if((20*(graph[i][j])) < 0.001) {
                     graph[i][j] = 0;
                 }
+
+            cout << std::setprecision(pre) << (20*(graph[i][j])-floor(20*(graph[i][j]))) << " ";
+
+        }
+        cout << " | ";
+    }
+
+
+    //for-schleifen hier getauscht, da wir pro Gut (über alle Bidder) die kummulierte Anzahl wollen//
+
+    cout << "\n";
+    cout << "summe fractional ";
+    for (int j=0; j < num_goods; ++j) {
+        for(int i=0; i < num_bidders; ++i) {
+            if((20*(graph[i][j])) < 0.001) {
+                graph[i][j] = 0;
+            }
             frac += (20*(graph[i][j])-floor(20*(graph[i][j])));
             cout << std::setprecision(pre) << (20*(graph[i][j])-floor(20*(graph[i][j]))) << " ";
 
@@ -276,9 +293,7 @@ int main() {
     }
 
 
-    cout << "\n";
-    cout << "summe fractional ";
-    cout << frac;
+
 
 
 
