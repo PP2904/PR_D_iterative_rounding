@@ -181,9 +181,15 @@ int main() {
     //set precision
     int pre = 3;
 
+    double max_util = 0;
+
     for(int i=0; i < num_bidders; ++i){
         cout << "Max Utility: " << max_utility[i] << std::setprecision(pre) << endl;
+        max_util = max_util + max_utility[i];
     }
+
+    cout << "Summe Max Utility: " << max_util;
+
 
 
     //                      //
