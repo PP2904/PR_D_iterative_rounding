@@ -163,7 +163,8 @@ int main() {
         cout << utility[i] << endl;
     }
 
-    //supply umbennenen und dafür
+    //Optimales Ergebnis//
+
     cout << endl;
     cout << "Fraktionales/optimales Ergebnis: ";
     cout << endl;
@@ -348,6 +349,35 @@ int main() {
     for (int i = 0; i < num_goods; ++i) {
         cout << prices[i]<< " ";
     }
+
+
+
+
+    //höchste Valuation für jeweils ein Gut = Entscheidung wem die fraktionalen Teilen eines Guts
+    // zugewwiesen werden
+
+
+
+
+    //gerundetes Ergebnis//
+
+    /*cout << endl;
+    cout << "gerundetes Ergebnis: ";
+*/
+
+/*TODO:
+    - Entscheidungsverfahren (wer hat höhere Valuation) einfügen
+        - fraktionale Teile damit verteilen
+    - Neue MaxUtility berechnen mit integralem Anteil und dem entsprechen per Entscheidungsverfahren
+        zugeteilten fraktionalen Anteil
+    - Summe der "Nutzen" interessant?
+    */
+
+
+
+
+
+
 
 
     return 0;
