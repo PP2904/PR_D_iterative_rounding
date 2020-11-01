@@ -244,9 +244,9 @@ int main() {
     /*** print graph ***/
     for(int i=0; i < num_bidders; ++i) {
         for (int j=0; j < num_goods; ++j) {
-            /*if(20*(graph[i][j]) < 1){
-                graph[i][j] = 0;
-            }*/
+                if((20*(graph[i][j])) < 0.001){
+                    graph[i][j] = 0;
+                }
             cout << 20*(graph[i][j]) << " ";
         }
         cout << " | ";
@@ -258,15 +258,19 @@ int main() {
 
     //fractional and integral parts
 
+    double frac = 0;
+
     cout << "\n";
     cout << "fractional Allokation/Kantengewicht: ";
     /*** print graph ***/
     for(int i=0; i < num_bidders; ++i) {
         for (int j=0; j < num_goods; ++j) {
-            if(20*(graph[i][j]) < 1){
-                graph[i][j] = 0;
-            }
+                if((20*(graph[i][j])) < 0.001) {
+                    graph[i][j] = 0;
+                }
+            frac += (20*(graph[i][j])-floor(20*(graph[i][j])));
             cout << std::setprecision(pre) << (20*(graph[i][j])-floor(20*(graph[i][j]))) << " ";
+
         }
         cout << " | ";
     }
@@ -274,18 +278,8 @@ int main() {
 
     cout << "\n";
     cout << "summe fractional ";
-    for(int i=0; i < num_bidders; ++i) {
-        for (int j=0; j < num_goods; ++j) {
-            if(20*(graph[i][j]) < 1){
-                graph[i][j] = 0;
-            }
-            if(graph[i][j]>1e-4){
-                cout << std::setprecision(pre) << (20*(graph[i][j])-floor(20*(graph[i][j]))) << " ";
-            }
+    cout << frac;
 
-        }
-
-    }
 
 
 
@@ -338,20 +332,6 @@ int main() {
     cout << "Preise der Güter: ";
     for (int i = 0; i < num_goods; ++i) {
         cout << prices[i]<< " ";
-    }
-
-    for(int i=0; i < num_bidders; ++i) {
-        for (int j=0; j < num_goods; ++j) {
-            cout << std::setprecision(pre) << floor(20*(graph[i][j])) << " ";
-        }
-        cout << " | ";
-    }
-    cout << "\n";
-
-    for(int i=0; i < num_bidders; ++i) {
-        for (int j=0; j < num_goods; ++j) {
-            cout << std::setprecision(pre) << floor(20*(graph[i][j])) << " ";
-        }
     }
 
 
