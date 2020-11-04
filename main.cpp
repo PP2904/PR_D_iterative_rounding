@@ -216,8 +216,8 @@ int main() {
     }
 
 
-
-    myfile.close();*/
+*/
+    myfile.close();
 
     /*** Write allocations to graph ***/
     vector<vector<double>> graph(num_bidders,vector<double>(num_goods));
@@ -282,8 +282,17 @@ int main() {
         cout << " | ";
     }
 
+    cout << "\n";
+
+
+    ofstream myfile2;
+    myfile2.open ("test.txt", std::ios_base::app);
+
+
 
     //for-schleifen hier getauscht, da wir pro Gut (über alle Bidder) die kummulierte Anzahl wollen//
+
+    //frac enthält die fraktionalen Teile der Allokation
 
     cout << "\n";
     cout << "summe fractional Gut 1 bis " << num_goods << ": \n ";
@@ -294,18 +303,25 @@ int main() {
             }
             frac = frac + (20*(graph[i][j])-floor(20*(graph[i][j])));
         }
+
         cout << std::setprecision(pre) << frac << " ";
         cout << " | ";
+        if(j == (num_goods-1)){
+            myfile2 << std::setprecision(pre) << frac;
+            continue;
+        }
+        myfile2 << std::setprecision(pre) << frac << " , ";
         frac = 0;
     }
-
-
-
-
+    myfile2 << endl;
+    myfile2.close();
 
 
 
     cout << "\n";
+
+    /*integ ist summe der integralen allocations
+    vector<double> integ;*/
 
     cout << "\n";
     cout << "integral Allokation/Kantengewicht: ";
@@ -319,18 +335,56 @@ int main() {
     cout << "\n";
 
     cout << "\n";
-    /* Kantengewichte sind die Allokationen der Güter auf die Bieter!! nicht die valuations */
 
+
+
+    cout << "\n";
     cout << "Valuation der Güter (jeweils für einen Bidder Gut 1 bis " << num_goods << "): \n ";
     for(int b=0; b< num_bidders; ++b) {
         for (int i = 0; i < num_goods; ++i) {
             cout << bidders[b].valuation[i] << " ";
+
         }
         cout << " | ";
     }
 
+    //sortiere höchste valuation für jeweiliges gut raus
+    cout << "\n";
+    cout << "Höchste Valuation pro Gut \n ";
 
-    cout << " \n ";
+    //val_Vec is vector with greatest valuations
+    vector<int>val_Vec={};
+
+    int greatest_val = 0;
+        for (int i = 0; i < num_goods; ++i) {
+            for(int b=0; b< num_bidders; ++b) {
+                if(bidders[b].valuation[i] > greatest_val){
+                    greatest_val = bidders[b].valuation[i];
+                }
+        }
+            val_Vec.push_back(greatest_val);
+            cout << greatest_val;
+            cout << " | ";
+            greatest_val = 0;
+    }
+
+    cout << "\n";
+    cout << "rounded allocation: ";
+
+    for (int j=0; j < num_goods; ++j) {
+        for(int i=0; i < num_bidders; ++i) {
+            //todo
+        }
+    }
+
+
+
+
+
+
+
+
+    /*cout << " \n ";
     cout << "Money spend for good: ";
     for(int b=0; b< num_bidders; ++b) {
         for (int i = 0; i < num_goods; ++i) {
@@ -354,7 +408,7 @@ int main() {
     cout << "Preise der Güter: ";
     for (int i = 0; i < num_goods; ++i) {
         cout << prices[i]<< " ";
-    }
+    }*/
 
 
 
@@ -371,6 +425,14 @@ int main() {
     cout << "gerundetes Ergebnis: ";
 */
 
+    return 0;
+
+}
+
+
+
+
+/* Kantengewichte sind die Allokationen der Güter auf die Bieter!! nicht die valuations */
 /*TODO:
     - Entscheidungsverfahren (wer hat höhere Valuation) einfügen
         - fraktionale Teile damit verteilen
@@ -380,13 +442,4 @@ int main() {
     */
 
 
-
-
-
-
-
-
-    return 0;
-
-}
 
