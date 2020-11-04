@@ -4,6 +4,7 @@
 #include <fstream>
 #include <chrono>
 #include <random>
+#include <list>
 
 
 //Proportional Response Dynamics
@@ -355,6 +356,9 @@ int main() {
     //val_Vec is vector with greatest valuations
     vector<int>val_Vec={};
 
+    //list of pairs = (greatest_val, number of good)
+    list<pair<int,int> > listPair;
+
     int greatest_val = 0;
         for (int i = 0; i < num_goods; ++i) {
             for(int b=0; b< num_bidders; ++b) {
@@ -363,6 +367,7 @@ int main() {
                 }
         }
             val_Vec.push_back(greatest_val);
+            listPair.push_back(make_pair(greatest_val,i));
             cout << greatest_val;
             cout << " | ";
             greatest_val = 0;
@@ -372,9 +377,7 @@ int main() {
     cout << "rounded allocation: ";
 
     for (int j=0; j < num_goods; ++j) {
-        for(int i=0; i < num_bidders; ++i) {
-            //todo
-        }
+        //todo
     }
 
 
