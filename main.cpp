@@ -356,8 +356,12 @@ int main() {
     //val_Vec is vector with greatest valuations
     vector<int>val_Vec={};
 
-    //list of pairs = (greatest_val, number of good)
-    list<pair<int,int> > listPair;
+    //(vector / list) of pairs = (greatest_val, number of good)
+    //list<pair<int,int> > listPair;
+    vector<pair<int,int> > vecPair;
+   /* Idee: pair mit (greatest_val, number of good), suchen dann nach Gut, welches fractional 0 oder 1 hat.
+          Dieses wird dann auf die Allocation dieses goods addiert; pair dient nur dazu, dass man die summe der
+          fraktionalen Werte auf die richtige (die mit dem höchsten Nutzen) addiert wird*/
 
     int greatest_val = 0;
         for (int i = 0; i < num_goods; ++i) {
@@ -365,24 +369,29 @@ int main() {
                 if(bidders[b].valuation[i] > greatest_val){
                     greatest_val = bidders[b].valuation[i];
                 }
+                if(b == (num_bidders-1)){
+                    vecPair.emplace_back(greatest_val, b);
+                }
+
         }
+
+            //cout << "\n";
+            // cout << get<0>(vecPair[b]) << ", " << get<1>(vecPair[b]) << endl;
+
+
+            //TODO: muss irgendwie ausserhalb der for schleife auf b zugreifen können?
+
             val_Vec.push_back(greatest_val);
-            listPair.push_back(make_pair(greatest_val,i));
             cout << greatest_val;
             cout << " | ";
             greatest_val = 0;
     }
 
+    //höchste Valuation für jeweils ein Gut = Entscheidung wem die fraktionalen Teilen eines Guts
+    // zugewwiesen werden
+
     cout << "\n";
     cout << "rounded allocation: ";
-
-    for (int j=0; j < num_goods; ++j) {
-        //todo
-    }
-
-
-
-
 
 
 
@@ -414,19 +423,6 @@ int main() {
     }*/
 
 
-
-
-    //höchste Valuation für jeweils ein Gut = Entscheidung wem die fraktionalen Teilen eines Guts
-    // zugewwiesen werden
-
-
-
-
-    //gerundetes Ergebnis//
-
-    /*cout << endl;
-    cout << "gerundetes Ergebnis: ";
-*/
 
     return 0;
 
