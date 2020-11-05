@@ -5,7 +5,7 @@
 #include <chrono>
 #include <random>
 #include <list>
-
+#include <iomanip>
 
 //Proportional Response Dynamics
 
@@ -297,6 +297,7 @@ int main() {
 
     cout << "\n";
     cout << "summe fractional Gut 1 bis " << num_goods << ": \n ";
+    vector<int> fracVec(num_goods);
     for (int j=0; j < num_goods; ++j) {
         for(int i=0; i < num_bidders; ++i) {
             if((20*(graph[i][j])) < 0.001) {
@@ -305,6 +306,7 @@ int main() {
             frac = frac + (20*(graph[i][j])-floor(20*(graph[i][j])));
         }
 
+        fracVec[j] = round(frac);
         cout << std::setprecision(pre) << frac << " ";
         cout << " | ";
         if(j == (num_goods-1)){
@@ -354,24 +356,25 @@ int main() {
     cout << "Höchste Valuation pro Gut \n ";
 
     //val_Vec is vector with greatest valuations
-    vector<int>val_Vec={};
+    //vector<int>val_Vec={};
 
     //(vector / list) of pairs = (greatest_val, number of good)
     //list<pair<int,int> > listPair;
-    vector<pair<int,int> > vecPair;
-   /* Idee: pair mit (greatest_val, number of good), suchen dann nach Gut, welches fractional 0 oder 1 hat.
+    vector<pair<int,int> > vecPair(num_goods);
+   /* Idee: pair mit (greatest_val, bidder), suchen dann nach Gut, welches fractional 0 oder 1 hat.
           Dieses wird dann auf die Allocation dieses goods addiert; pair dient nur dazu, dass man die summe der
           fraktionalen Werte auf die richtige (die mit dem höchsten Nutzen) addiert wird*/
 
     int greatest_val = 0;
         for (int i = 0; i < num_goods; ++i) {
-            for(int b=0; b< num_bidders; ++b) {
-                if(bidders[b].valuation[i] > greatest_val){
+            for(int b=0; b < num_bidders; ++b) {
+                if(bidders[b].valuation[i] >= greatest_val){
                     greatest_val = bidders[b].valuation[i];
+                    vecPair[i] = make_pair(greatest_val, b);
                 }
-                if(b == (num_bidders-1)){
+                /*if(b == (num_bidders-1)){
                     vecPair.emplace_back(greatest_val, b);
-                }
+                }*/
 
         }
 
@@ -381,11 +384,32 @@ int main() {
 
             //TODO: muss irgendwie ausserhalb der for schleife auf b zugreifen können?
 
-            val_Vec.push_back(greatest_val);
-            cout << greatest_val;
+            //val_Vec.push_back(greatest_val);
+            cout << "(" << vecPair[i].first << "," << vecPair[i].second << ")";
             cout << " | ";
             greatest_val = 0;
     }
+    cout << endl;
+
+    vector<vector<int>> up_integral(num_bidders,vector<int>(num_goods));
+    //Initialisiere mit integraler Allokation
+    for(int i=0; i < num_bidders; ++i) {
+        for(int j=0; j < num_goods; ++j) {
+            up_integral[i][j] = floor(20*(graph[i][j]));
+        }
+    }
+    for(int j=0; j < num_goods; ++j) {
+        up_integral[vecPair[j].second][j] += fracVec[j];
+    }
+    cout << "Update integrale Allokation: ";
+    for(int i=0; i < num_bidders; ++i) {
+        for(int j=0; j < num_goods; ++j) {
+            cout << up_integral[i][j] << " ";
+        }
+        cout << " | ";
+    }
+    cout << endl;
+
 
     //höchste Valuation für jeweils ein Gut = Entscheidung wem die fraktionalen Teilen eines Guts
     // zugewwiesen werden
