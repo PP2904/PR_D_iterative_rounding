@@ -361,20 +361,20 @@ int main() {
 
 
 
-    cout << "\n";
+    /*cout << "\n";
     cout << "integral Allokation/Kantengewicht: \n";
-    /*** print graph ***/
+    *//*** print graph ***//*
     for (int i = 0; i < num_bidders; ++i) {
         for (int j = 0; j < num_goods; ++j) {
             cout << std::setprecision(pre) << floor(20 * (graph[i][j])) << " ";
         }
         cout << " | ";
     }
-    cout << "\n";
+    cout << "\n";*/
 
-    cout << "\n";
+   /* cout << "\n";
     cout << "fractional Allokation/Kantengewicht: \n";
-    /*** print graph ***/
+    *//*** print graph ***//*
     for (int i = 0; i < num_bidders; ++i) {
         for (int j = 0; j < num_goods; ++j) {
             if ((20 * (graph[i][j])) < 0.001) {
@@ -386,7 +386,7 @@ int main() {
         }
         cout << " | ";
     }
-    cout << "\n";
+    cout << "\n";*/
 
     cout << "\n";
     cout << "\n";
@@ -415,7 +415,7 @@ int main() {
     cout << endl;
 
 
-    cout << " \n";
+    /*cout << " \n";
     cout << "Money spend for good (jeweils für einen Bidder Gut 1 bis " << num_goods << "): \n";
     for (int b = 0; b < num_bidders; ++b) {
         for (int i = 0; i < num_goods; ++i) {
@@ -426,7 +426,7 @@ int main() {
         }
         cout << " | ";
 
-    }
+    }*/
 
     //Budget der Bidder
 /*
@@ -437,30 +437,45 @@ int main() {
     }
 */
 
-    cout << " \n";
+    /*cout << " \n";
     cout << "Preise der Güter: ";
     for (int i = 0; i < num_goods; ++i) {
         cout << prices[i] << " ";
-    }
+    }*/
 
 
     //graph[][] := anfängliche/fraktionale Allokationen
 
-    //neue max_utilities
-    cout << "\n";
-    cout << "\n";
-    cout << "\n";
-    cout << "max_utility (for rounded alloc): ";
-    double util = 0.0;
 
+   /* alte (nicht gerundete max_util pro Bidder:
+    double util = 0.0;
     for (int i = 0; i < num_bidders; ++i) {
         for (int j = 0; j < num_goods; ++j) {
-             util = util + ((bidders[i].spent[j])/(prices[j])) * bidders[i].valuation[j];
+            util = util + ((bidders[i].spent[j])/(prices[j])) * bidders[i].valuation[j];
         }
-        cout << util << "| ";
+        cout << rd_util << "| ";
         util = 0.0;
-    }
+    }*/
+
+
+    //max_utility der gerundeten Alloks berechnen
     cout << "\n";
+    cout << "\n";
+    cout << "\n";
+    cout << "max_utility (for rounded alloc): \n";
+    double rd_util = 0.0;
+    vector<double> rd_max_utility(num_bidders);
+    for (int i = 0; i < num_bidders; ++i) {
+        for (int j = 0; j < num_goods; ++j) {
+            rd_util = rd_util + (((up_integral[i][j]) / 20.0) * bidders[i].valuation[j]);
+        }
+        rd_max_utility[i] = rd_util;
+        cout << rd_util << "| ";
+        cout << max_utility[i] << " \n";
+        rd_util = 0.0;
+    }
+
+   /* cout << "\n";
     cout << "Differenz Allokationen (optimal/gerundet): \n";
     double diff = 0.0;
     for (int i = 0; i < num_bidders; i++) {
@@ -470,9 +485,19 @@ int main() {
             cout << diff << "  ";
         }
         cout << " | ";
+    }*/
+
+
+    //vergleich optimal und gerundet
+
+    //max_utility[i] = optimal
+    //rd_max_utility[i] = gerundet
+    cout << "\n";
+    for (int i = 0; i < num_bidders; i++) {
+        cout << "\n Nutzen des Bidders " << i << " hat sich um " << abs(((max_utility[i]) - (rd_max_utility[i]))) << " verändert.\n";
     }
 
-    //TODO: max_utility der gerundeten Alloks berechnen
+
 
 
 
