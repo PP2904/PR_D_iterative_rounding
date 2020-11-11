@@ -70,6 +70,11 @@ int main() {
     cin >> num_bidders;
     //int num_bidders = 10;
 
+    if (num_bidders > num_goods)
+    {
+        printf ("Error number bidders larger than number goods");
+        exit (EXIT_FAILURE);
+    }
 
     vector<Bidder> bidders(num_bidders);
 
