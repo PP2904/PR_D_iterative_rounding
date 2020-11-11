@@ -49,11 +49,14 @@ int random_number(int lb, int ub) {
 //Main method
 int main() {
 
-    ofstream myfile;
-    myfile.open("markets.txt", std::ios_base::app);
+    /*ofstream myfile;
+    myfile.open("markets.txt", std::ios_base::app);*/
 
     //generate #goods
-    int num_goods = 4;
+    int num_goods;
+    cout << "Number Goods: ";
+    cin >> num_goods;
+    //int num_goods = 6;
 
 
     //vector<Bidder> bidders(5);
@@ -62,7 +65,10 @@ int main() {
     double i = 1.;
 
     //generate bidders with val, budget and spent_vec randomly
-    int num_bidders = 4;
+    int num_bidders;
+    cout << "Number Bidders: ";
+    cin >> num_bidders;
+    //int num_bidders = 10;
 
 
     vector<Bidder> bidders(num_bidders);
@@ -74,20 +80,12 @@ int main() {
         bidders[k].budget = random_number(0, 11) + random_number(0, 31);
         bidders[k].spent.resize(num_goods, bidders[0].budget / (double) num_goods);
     }
-    /*//srand ( time(NULL) );
-    for (int k = 0; k < num_bidders; ++k) {
-        //values have no meaning, just randomizing
-        double r1 = random_number(0,11);
-        double r2 = random_number(0,31);
-        double r3 = random_number(0,8);
 
-        bidders[k].valuation = {(r1+r2/r3)* i, (r1+r2/r3) * i, (r1+r2/r3) * i};
-        bidders[k].budget = r1+r2;
-        bidders[k].spent.resize(num_goods, bidders[0].budget / (double) num_goods);
+    int num_iterations;
+    cout << "Number Iterations: ";
+    cin >> num_iterations;
 
-    }
-*/
-    int num_iterations = 2000;
+   //int num_iterations = 2000;
     vector<double> prices(num_goods);
     for (int it = 0; it < num_iterations; ++it) {
 
@@ -125,13 +123,14 @@ int main() {
         cout << endl;
 
         //writing to txt file
+
         /*ofstream myfile;
-        myfile.open ("markets.txt", std::ios_base::app);*/
+        myfile.open ("markets.txt", std::ios_base::app);
         myfile << "Iteration " << it << ":\n";
         for (int i = 0; i < bidders.size(); ++i) {
             myfile << "Bidder " << i << ": " << bidders[i] << endl;
         }
-        myfile << endl;
+        myfile << endl;*/
     }
 
     //von Max utility und utility (im equilibrium sind diese gleich)
@@ -184,6 +183,8 @@ int main() {
     //set precision
     int pre = 3;
 
+
+    //macht das Sinn? Summe der Max_utils?
     double max_util = 0;
 
     for (int i = 0; i < num_bidders; ++i) {
@@ -191,7 +192,7 @@ int main() {
         max_util = max_util + max_utility[i];
     }
 
-    cout << "Summe Max Utility: " << max_util;
+    //cout << "Summe Max Utility: " << max_util;
 
 
 
@@ -217,10 +218,10 @@ int main() {
         myfile << "Demand: " << demand << endl;
         myfile << "\n";
     }
+     myfile.close();
 
 
 */
-    myfile.close();
 
     /*** Write allocations to graph ***/
     vector<vector<double>> graph(num_bidders, vector<double>(num_goods));
@@ -270,12 +271,8 @@ int main() {
     //fractional and integral parts
 
 
-
-    cout << "\n";
-
-
-    ofstream myfile2;
-    myfile2.open("test.txt", std::ios_base::app);
+    /*ofstream myfile2;
+    myfile2.open("test.txt", std::ios_base::app);*/
 
 
 
@@ -285,8 +282,8 @@ int main() {
 
     double frac = 0;
 
-    cout << "\n";
-    cout << "summe fractional Gut 1 bis " << num_goods << ": \n";
+
+    //cout << "summe fractional Gut 1 bis " << num_goods << ": \n";
     vector<int> fracVec(num_goods);
     for (int j = 0; j < num_goods; ++j) {
         for (int i = 0; i < num_bidders; ++i) {
@@ -296,7 +293,7 @@ int main() {
             frac = frac + (20 * (graph[i][j]) - floor(20 * (graph[i][j])));
         }
 
-        fracVec[j] = round(frac);
+        /*fracVec[j] = round(frac);
         cout << std::setprecision(pre) << frac << " ";
         cout << " | ";
         if (j == (num_goods - 1)) {
@@ -304,15 +301,15 @@ int main() {
             continue;
         }
         myfile2 << std::setprecision(pre) << frac << " , ";
-        frac = 0;
+        frac = 0;*/
     }
-    myfile2 << endl;
-    myfile2.close();
-
-    cout << "\n";
+   /* myfile2 << endl;
+    myfile2.close();*/
 
 
-    cout << "\n";
+
+
+ /*   cout << "\n";
     cout << "Valuation der Güter (jeweils für einen Bidder Gut 1 bis " << num_goods << "): \n ";
     for (int b = 0; b < num_bidders; ++b) {
         for (int i = 0; i < num_goods; ++i) {
@@ -320,7 +317,7 @@ int main() {
 
         }
         cout << " | ";
-    }
+    }*/
 
     //sortiere höchste valuation für jeweiliges gut raus
     cout << "\n";
@@ -470,8 +467,15 @@ int main() {
             rd_util = rd_util + (((up_integral[i][j]) / 20.0) * bidders[i].valuation[j]);
         }
         rd_max_utility[i] = rd_util;
-        cout << rd_util << "| ";
-        cout << max_utility[i] << " \n";
+        cout << rd_util << " | ";
+        cout << max_utility[i] << " | ";
+        if(rd_max_utility[i] > max_utility[i]){
+            cout << 1- (max_utility[i]/rd_max_utility[i]) << " % weniger  \n";
+        }
+        else{
+            cout << 1-(rd_max_utility[i]/max_utility[i]) << " % weniger \n";
+        }
+        //cout << " \n";
         rd_util = 0.0;
     }
 
@@ -488,14 +492,51 @@ int main() {
     }*/
 
 
+
     //vergleich optimal und gerundet
 
     //max_utility[i] = optimal
     //rd_max_utility[i] = gerundet
+
+    ofstream myfile;
+    myfile.open ("markets.txt", std::ios_base::app);
     cout << "\n";
+    myfile << "Number Goods: " << num_goods << " Number Bidders: " << num_bidders << " Number Iterations: " << num_iterations << "\n";
+    cout << "\n";
+    myfile << "Maximierter Nutzen bei fraktionale Allokation" << " , " << "Maximierter Nutzen bei integraler Allokation: " << "\n";
     for (int i = 0; i < num_bidders; i++) {
         cout << "\n Nutzen des Bidders " << i << " hat sich um " << abs(((max_utility[i]) - (rd_max_utility[i]))) << " verändert.\n";
+        myfile << "Bidder " << i << ": "<< (max_utility[i]) << " , " << (rd_max_utility[i]) << endl;
     }
+    myfile << "Highest Valuation for Good 1 to " << num_goods << " and the bidder with this specific valuation: " << "\n";
+    for (int i = 0; i < num_goods; ++i) {
+        for (int b = 0; b < num_bidders; ++b) {
+            if (bidders[b].valuation[i] >= greatest_val) {
+                greatest_val = bidders[b].valuation[i];
+                vecPair[i] = make_pair(greatest_val, b);
+            }
+        }
+        myfile << "(" << vecPair[i].first << "," << vecPair[i].second << ")";
+        myfile << " | ";
+        myfile << endl;
+        greatest_val = 0;
+    }
+    myfile << endl;
+
+    //maximales element des vectors
+    double money = 0.0;
+    vector<pair<int, double> > vecPairBudget(1);
+    for (int b = 0; b < num_bidders; ++b) {
+        if(bidders[b].budget > money) {
+            money = bidders[b].budget;
+            vecPairBudget[1].first = b;
+            vecPairBudget[1].second = money;
+        }
+    }
+    myfile << "Biggest Budget: " << money << " is available by Bidder " <<  vecPairBudget[1].first << "\n";
+    myfile << endl;
+    myfile.close();
+
 
 
 
