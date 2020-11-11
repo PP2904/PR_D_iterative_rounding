@@ -459,7 +459,7 @@ int main() {
     cout << "\n";
     cout << "\n";
     cout << "\n";
-    cout << "max_utility (for rounded alloc): \n";
+    cout << "max_utility for rounded alloc | max_utility | difference: \n";
     double rd_util = 0.0;
     vector<double> rd_max_utility(num_bidders);
     for (int i = 0; i < num_bidders; ++i) {
@@ -470,10 +470,10 @@ int main() {
         cout << rd_util << " | ";
         cout << max_utility[i] << " | ";
         if(rd_max_utility[i] > max_utility[i]){
-            cout << 1- (max_utility[i]/rd_max_utility[i]) << " % weniger  \n";
+            cout << 1- (max_utility[i]/rd_max_utility[i]) << " % mehr Nutzen  \n";
         }
         else{
-            cout << 1-(rd_max_utility[i]/max_utility[i]) << " % weniger \n";
+            cout << 1-(rd_max_utility[i]/max_utility[i]) << " % weniger Nutzen \n";
         }
         //cout << " \n";
         rd_util = 0.0;
