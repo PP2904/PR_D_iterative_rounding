@@ -163,12 +163,6 @@ int main() {
     }
 
 
-    //ich benötige die utility zu Beginn des Programms, um diese am Ende für die gerundeten Kanten mal 1 zu nehmen
-    // und mit der max_utility aus dem fraktionalen Teil zu Vergleichen
-
-    for (int i = 0; i < num_bidders; ++i) {
-        cout << utility[i] << endl;
-    }
 
     //Optimales Ergebnis//
 
@@ -181,7 +175,7 @@ int main() {
         for (int i = 0; i < bidders.size(); ++i) {
             demand += bidders[i].spent[j] / prices[j];
         }
-        cout << "Demand: " << demand << endl;
+        //cout << "Demand: " << demand << endl;
         //cout << "Supply: " << prices[j] << endl;
     }
 
@@ -190,11 +184,11 @@ int main() {
 
 
     //macht das Sinn? Summe der Max_utils?
-    double max_util = 0;
+    //double max_util = 0;
 
     for (int i = 0; i < num_bidders; ++i) {
         cout << "Max Utility: " << max_utility[i] << std::setprecision(pre) << endl;
-        max_util = max_util + max_utility[i];
+        //max_util = max_util + max_utility[i];
     }
 
     //cout << "Summe Max Utility: " << max_util;
@@ -228,6 +222,8 @@ int main() {
 
 */
 
+
+/* Kantengewichte sind die Allokationen der Güter auf die Bieter!! nicht die valuations */
     /*** Write allocations to graph ***/
     vector<vector<double>> graph(num_bidders, vector<double>(num_goods));
     for (int i = 0; i < num_bidders; ++i) {
@@ -236,54 +232,6 @@ int main() {
         }
     }
 
-
-
-    /*** hier können 2 bidder das gleiche Gut bekommen ***//*
-
-    cout << "\n";
-    for (int j = 0; j < num_goods; ++j) {
-        for (int i = 0; i < num_bidders; ++i) {
-            cout << 100*(graph[i][j]) << " ";
-        }
-    }*/
-
-
-    /*** wir tauschen hier bidder und goods, sodass nicht 2 Bidder das gleiche Gut zugewiesen bekommen ***/
-
-    /* Kantengewichte sind die Allokationen der Güter auf die Bieter!! nicht die valuations */
-
-    /*multiplizieren die Allokation mit 20, da wir einen Wert > 1 erhalten wollen, um iterative Rounding
-     * nutzen zu können */
-/*
-    cout << "\n";
-    cout << "\n";
-    cout << "Allokation/Kantengewicht: \n";
-    *//*** print graph ***//*
-    for (int i = 0; i < num_bidders; ++i) {
-        for (int j = 0; j < num_goods; ++j) {
-            if ((20 * (graph[i][j])) < 0.001) {
-                graph[i][j] = 0;
-            }
-            cout << 20 * (graph[i][j]) << " ";
-        }
-        cout << " | ";
-    }
-    cout << "\n";*/
-
-    /*** runde ich die Nachkommastellen, während ich die Vorkommastelle behalte; ***/
-
-
-    //fractional and integral parts
-
-
-    /*ofstream myfile2;
-    myfile2.open("test.txt", std::ios_base::app);*/
-
-
-
-    //for-schleifen hier getauscht, da wir pro Gut (über alle Bidder) die kummulierte Anzahl wollen//
-
-    //frac enthält die fraktionalen Teile der Allokation
 
     double frac = 0;
 
@@ -312,17 +260,6 @@ int main() {
     myfile2.close();*/
 
 
-
-
- /*   cout << "\n";
-    cout << "Valuation der Güter (jeweils für einen Bidder Gut 1 bis " << num_goods << "): \n ";
-    for (int b = 0; b < num_bidders; ++b) {
-        for (int i = 0; i < num_goods; ++i) {
-            cout << bidders[b].valuation[i] << " ";
-
-        }
-        cout << " | ";
-    }*/
 
     //sortiere höchste valuation für jeweiliges gut raus
     cout << "\n";
@@ -362,34 +299,6 @@ int main() {
     }
 
 
-
-    /*cout << "\n";
-    cout << "integral Allokation/Kantengewicht: \n";
-    *//*** print graph ***//*
-    for (int i = 0; i < num_bidders; ++i) {
-        for (int j = 0; j < num_goods; ++j) {
-            cout << std::setprecision(pre) << floor(20 * (graph[i][j])) << " ";
-        }
-        cout << " | ";
-    }
-    cout << "\n";*/
-
-   /* cout << "\n";
-    cout << "fractional Allokation/Kantengewicht: \n";
-    *//*** print graph ***//*
-    for (int i = 0; i < num_bidders; ++i) {
-        for (int j = 0; j < num_goods; ++j) {
-            if ((20 * (graph[i][j])) < 0.001) {
-                graph[i][j] = 0;
-            }
-
-            cout << std::setprecision(pre) << (20 * (graph[i][j]) - floor(20 * (graph[i][j]))) << " ";
-
-        }
-        cout << " | ";
-    }
-    cout << "\n";*/
-
     cout << "\n";
     cout << "\n";
     cout << "Optimale Allokation: \n";
@@ -417,48 +326,6 @@ int main() {
     cout << endl;
 
 
-    /*cout << " \n";
-    cout << "Money spend for good (jeweils für einen Bidder Gut 1 bis " << num_goods << "): \n";
-    for (int b = 0; b < num_bidders; ++b) {
-        for (int i = 0; i < num_goods; ++i) {
-            if (bidders[b].spent[i] < (10 ^ -10)) {
-                bidders[b].spent[i] = 0;
-            }
-            cout << std::fixed << (bidders[b].spent[i]) << " ";
-        }
-        cout << " | ";
-
-    }*/
-
-    //Budget der Bidder
-/*
-    cout << " \n ";
-    cout << "Budget der Bidder: ";
-    for(int b=0; b< num_bidders; ++b) {
-        cout << (bidders[b].budget)<< " ";
-    }
-*/
-
-    /*cout << " \n";
-    cout << "Preise der Güter: ";
-    for (int i = 0; i < num_goods; ++i) {
-        cout << prices[i] << " ";
-    }*/
-
-
-    //graph[][] := anfängliche/fraktionale Allokationen
-
-
-   /* alte (nicht gerundete max_util pro Bidder:
-    double util = 0.0;
-    for (int i = 0; i < num_bidders; ++i) {
-        for (int j = 0; j < num_goods; ++j) {
-            util = util + ((bidders[i].spent[j])/(prices[j])) * bidders[i].valuation[j];
-        }
-        cout << rd_util << "| ";
-        util = 0.0;
-    }*/
-
 
     //max_utility der gerundeten Alloks berechnen
     cout << "\n";
@@ -484,17 +351,6 @@ int main() {
         rd_util = 0.0;
     }
 
-   /* cout << "\n";
-    cout << "Differenz Allokationen (optimal/gerundet): \n";
-    double diff = 0.0;
-    for (int i = 0; i < num_bidders; i++) {
-        for (int j = 0; j < num_goods; ++j) {
-            // achtung: graph-value * 20
-            diff = up_integral[i][j]-(20 * graph[i][j]); //ohne abs
-            cout << diff << "  ";
-        }
-        cout << " | ";
-    }*/
 
 
 
@@ -545,21 +401,10 @@ int main() {
 
 
 
-
-
     return 0;
 
 }
 
 
-
-
-
-
-/* Kantengewichte sind die Allokationen der Güter auf die Bieter!! nicht die valuations */
-/*TODO:
-    - Neue MaxUtility berechnen mit integralem Anteil und dem entsprechen per Entscheidungsverfahren
-        zugeteilten fraktionalen Anteil
-    */
 
 
