@@ -101,7 +101,7 @@ int main() {
     cin >> num_iter_exp;
 
     //FOR SCHLEIFE FÜR ANZAHL WIEDERHOLUNGEN DES GESAMTEXPERIMENTS
-    for (int iter = 0; iter < num_iter_exp; iter++) {
+    for (int iter = 1; iter < num_iter_exp; iter++) {
 
 
         /*
@@ -364,7 +364,7 @@ int main() {
         cout << "\n";
         cout << "\n";
         cout << "\n";
-        cout << "max_utility for rounded alloc: | max_utility: | integrality gap: \n";
+        cout << "integrality gap: \n";
         double rd_util = 0.0;
         vector<double> rd_max_utility(num_bidders);
 
