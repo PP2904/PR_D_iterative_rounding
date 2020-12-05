@@ -105,7 +105,7 @@ int main() {
     myfile2.open("result.txt", std::ios_base::app);
 
     myfile2 << "Number Goods: " << num_goods << ", " << " Number Bidders: " << num_bidders << ", "  << " Number Iterations: " << num_iterations << "\n";
-
+    myfile2 << "integral util | fractional util" << "\n";
 
     //FOR SCHLEIFE FÜR ANZAHL WIEDERHOLUNGEN DES GESAMTEXPERIMENTS
     for (int iter = 1; iter < num_iter_exp; iter++) {
