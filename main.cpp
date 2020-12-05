@@ -79,26 +79,33 @@ int main() {
     cin >> num_bidders;
     //int num_bidders = 10;
 
-    if (num_bidders > num_goods) {
+    /*if (num_bidders > num_goods) {
         printf("Error number bidders larger than number goods");
         exit(EXIT_FAILURE);
-    }
+    }*/
 
     //num_iterations = Anzahl der Iterationen des Handels auf dem FM
     int num_iterations;
     cout << "Number Iterations: ";
     cin >> num_iterations;
 
-    //Name der file, in die geschrieben wird
+    /*//Name der file, in die geschrieben wird
     string filename;
     cout << "Welchen Namen soll die File haben? ";
-    cin >> filename;
+    cin >> filename;*/
 
 
     //num_iter_exp = Anzahl Ausführungen des Gesamtexperiments
     int num_iter_exp;
     cout << "Number Iterations Experiment: ";
     cin >> num_iter_exp;
+
+
+    ofstream myfile2;
+    myfile2.open("result.txt", std::ios_base::app);
+
+    myfile2 << "Number Goods: " << num_goods << ", " << " Number Bidders: " << num_bidders << ", "  << " Number Iterations: " << num_iterations << "\n";
+
 
     //FOR SCHLEIFE FÜR ANZAHL WIEDERHOLUNGEN DES GESAMTEXPERIMENTS
     for (int iter = 1; iter < num_iter_exp; iter++) {
@@ -118,8 +125,8 @@ int main() {
         for (int k = 0; k < num_bidders; ++k) {
             bidders[k].valuation.resize(num_goods);
             //valuation pro Gut und Bidder
-            for (auto &v: bidders[k].valuation) v = (random_number(0, 11) + random_number(0, 15)) * i;
-            bidders[k].budget = random_number(0, 11) + random_number(0, 31);
+            for (auto &v: bidders[k].valuation) v = (random_number(1, 11) + random_number(1, 15)) * i;
+            bidders[k].budget = random_number(1, 11) + random_number(1, 31);
             bidders[k].spent.resize(num_goods, bidders[0].budget / (double) num_goods);
         }
 
@@ -373,29 +380,31 @@ int main() {
         double avg_int_gap = 0.0;
 
 
-        ofstream myfile2;
-        myfile2.open(filename + "_table" + ".txt", std::ios_base::app);
-
-        myfile2 << "Number Goods: " << num_goods << ", " << " Number Bidders: " << num_bidders << ", "  << " Number Iterations: " << num_iterations << "\n";
 
         for (int i = 0; i < num_bidders; ++i) {
             for (int j = 0; j < num_goods; ++j) {
                 rd_util = rd_util + (((up_integral[i][j]) / 20.0) * bidders[i].valuation[j]);
             }
             rd_max_utility[i] = rd_util;
-            myfile2 << rd_max_utility[i] << " | ";
-            myfile2 << std::setprecision(pre)  << max_utility[i] << "\n";
+
+            if(rd_max_utility[i] <= max_utility[i]) {
+                myfile2 << rd_max_utility[i] << " | ";
+                myfile2 << std::setprecision(pre) << max_utility[i] << "\n";
+            }
+
 
             if(rd_max_utility[i] <= max_utility[i]){
                 cout << std::setprecision(pre)  << rd_max_utility[i]/max_utility[i] << "\n";
                 //myfile << std::setprecision(pre)  << rd_max_utility[i]/max_utility[i] << "\n";
                 int_gap = int_gap + (rd_max_utility[i]/max_utility[i]);
             }
-            if(rd_max_utility[i] > max_utility[i]){
+
+
+            /*if(rd_max_utility[i] > max_utility[i]){
                 cout << std::setprecision(pre)  << max_utility[i]/rd_max_utility[i] << "\n";
                 //myfile << std::setprecision(pre)  << max_utility[i]/rd_max_utility[i] << "\n";
                 int_gap = int_gap + (max_utility[i]/rd_max_utility[i]);
-            }
+            }*/
 
             print_int_gap = int_gap;
             if(i==(num_bidders-1)){
@@ -405,10 +414,10 @@ int main() {
             rd_util = 0.0;
         }
 
-        myfile2 << "Integrality gap is in average: " << avg_int_gap;
+        /*myfile2 << "Integrality gap is in average: " << avg_int_gap;
         myfile2 << "\n";
         myfile2 << "\n";
-        myfile2 << "\n";
+        myfile2 << "\n";*/
 
 
 
@@ -434,7 +443,7 @@ int main() {
     std::time_t end_time = std::chrono::system_clock::to_time_t(end);
 
     if(iter == (num_iter_exp-1)){
-        myfile2 << "finished computation at " << std::ctime(&end_time)
+        cout << "finished computation at " << std::ctime(&end_time)
                 << "elapsed time: " << elapsed_seconds.count() << "s\n";
     }
 
