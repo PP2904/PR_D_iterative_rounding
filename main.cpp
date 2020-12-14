@@ -84,6 +84,11 @@ int main() {
         exit(EXIT_FAILURE);
     }*/
 
+    //Quantität pro Gut
+    double quantItem;
+    cout << "Quantität eines Guts: ";
+    cin >> quantItem;
+
     //num_iterations = Anzahl der Iterationen des Handels auf dem FM
     int num_iterations;
     cout << "Number Iterations: ";
@@ -280,10 +285,10 @@ int main() {
         vector<int> fracVec(num_goods);
         for (int j = 0; j < num_goods; ++j) {
             for (int i = 0; i < num_bidders; ++i) {
-                if ((20 * (graph[i][j])) < 0.001) {
+                if ((quantItem * (graph[i][j])) < 0.001) {
                     graph[i][j] = 0;
                 }
-                frac = frac + (20 * (graph[i][j]) - floor(20 * (graph[i][j])));
+                frac = frac + (quantItem * (graph[i][j]) - floor(quantItem * (graph[i][j])));
             }
 
             /*fracVec[j] = round(frac);
@@ -331,7 +336,7 @@ int main() {
         zugeteilt wurden */
         for (int i = 0; i < num_bidders; ++i) {
             for (int j = 0; j < num_goods; ++j) {
-                up_integral[i][j] = floor(20 * (graph[i][j]));
+                up_integral[i][j] = floor(quantItem * (graph[i][j]));
             }
         }
         for (int j = 0; j < num_goods; ++j) {
@@ -345,10 +350,10 @@ int main() {
         /*** print graph ***/
         for (int i = 0; i < num_bidders; ++i) {
             for (int j = 0; j < num_goods; ++j) {
-                if ((20 * (graph[i][j])) < 0.001) {
+                if ((quantItem * (graph[i][j])) < 0.001) {
                     graph[i][j] = 0;
                 }
-                cout << 20 * (graph[i][j]) << " ";
+                cout << quantItem * (graph[i][j]) << " ";
             }
             cout << " | ";
         }
@@ -383,7 +388,7 @@ int main() {
 
         for (int i = 0; i < num_bidders; ++i) {
             for (int j = 0; j < num_goods; ++j) {
-                rd_util = rd_util + (((up_integral[i][j]) / 20.0) * bidders[i].valuation[j]);
+                rd_util = rd_util + (((up_integral[i][j]) / quantItem) * bidders[i].valuation[j]);
             }
             rd_max_utility[i] = rd_util;
 
