@@ -243,28 +243,47 @@ int main() {
 
 
 
-/* Kantengewichte sind die Allokationen der Güter auf die Bieter!! nicht die valuations */
+        // Kantengewichte sind die Allokationen der Güter auf die Bieter!!
         /*** Write allocations to graph ***/
+
         vector<vector<double>> graph(num_bidders, vector<double>(num_goods));
         for (int i = 0; i < num_bidders; ++i) {
             for (int j = 0; j < num_goods; ++j) {
-                graph[i][j] = bidders[i].spent[j] / prices[j];
+
+                double alloc = bidders[i].spent[j] / prices[j];
+
+                if (alloc <= 0.01) {
+                    alloc = 0.0;
+                }
+
+                if (alloc > 1) {
+                    alloc = 1.0;
+                }
+
+                graph[i][j] = alloc;
             }
         }
 
+        //attention: jetzt gibt es keine Werte unter 0.01 und über 1
 
-        double frac = 0;
+      //  double frac = 0;
 
 
-        //cout << "summe fractional Gut 1 bis " << num_goods << ": \n";
-        vector<int> fracVec(num_goods);
-        for (int j = 0; j < num_goods; ++j) {
-            for (int i = 0; i < num_bidders; ++i) {
+
+
+        //attention: berechnen frac part für Gut über alle bidder
+        vector<double> fracVec(num_goods);
+
+        for (int i = 0; i < num_bidders; ++i) {
+            for (int j = 0; j < num_goods; ++j) {
                 if ((quantItem * (graph[i][j])) < 0.001) {
                     graph[i][j] = 0;
                 }
-                frac = frac + (quantItem * (graph[i][j]) - floor(quantItem * (graph[i][j])));
+
+                fracVec[j] += ((quantItem * (graph[i][j])) - floor(quantItem * (graph[i][j])));
+
             }
+        }
 
 
 
@@ -276,9 +295,12 @@ int main() {
             vector<pair<int, int> > vecPair(num_goods);
 
             //höchste Valuation für jeweils ein Gut = Entscheidung wem die fraktionalen Teilen eines Guts
-            // zugewwiesen werden
+            // zugewiesen werden
 
             int greatest_val = 0;
+
+
+            //attention: berechnen hier die höchste valuation für ein gut (und den dazugehörigen bidder)
             for (int i = 0; i < num_goods; ++i) {
                 for (int b = 0; b < num_bidders; ++b) {
                     if (bidders[b].valuation[i] >= greatest_val) {
@@ -293,19 +315,28 @@ int main() {
             }
             cout << endl;
 
-            vector<vector<int>> up_integral(num_bidders, vector<int>(num_goods));
-            //Initialisiere mit integraler Allokation
+
+
+            //Attention: Initialisiere mit integraler Allokation
             /*up_integral := die integralen Ergebnisse, nachdem die fraktionalen Teile den jeweiligen Biddern
             zugeteilt wurden */
+
+            vector<vector<int>> up_integral(num_bidders, vector<int>(num_goods));
+
+
             for (int i = 0; i < num_bidders; ++i) {
                 for (int j = 0; j < num_goods; ++j) {
                     up_integral[i][j] = floor(quantItem * (graph[i][j]));
+
+                    //attention: weise summe fraktionaler teile dem bidder mit höchster valuation zu (für bestimments gut)
+
+                    if(vecPair[j].second == i){
+                        up_integral[i][j] += fracVec[j];
+                    }
+
+
                 }
             }
-            for (int j = 0; j < num_goods; ++j) {
-                up_integral[vecPair[j].second][j] += fracVec[j];
-            }
-
 
             cout << "\n";
             cout << "\n";
@@ -335,51 +366,31 @@ int main() {
 
 
 
-            //max_utility der gerundeten Alloks berechnen
-            cout << "\n";
-            cout << "\n";
-            cout << "\n";
-            cout << "integrality gap: \n";
             double rd_util = 0.0;
-
-
-            double int_gap = 0.0;
-            double print_int_gap = 0.0;
-            double avg_int_gap = 0.0;
-
 
             for (int i = 0; i < num_bidders; ++i) {
                 for (int j = 0; j < num_goods; ++j) {
                     rd_util = rd_util + (((up_integral[i][j]) / quantItem) * bidders[i].valuation[j]);
                 }
                 rd_max_utility[i] = rd_util;
-
-                /* if(rd_max_utility[i] <= max_utility[i]) {
-                     myfile2 << rd_max_utility[i] << " | ";
-                     myfile2 << std::setprecision(pre) << max_utility[i] << "\n";
-                 }*/
+            }
 
 
-                if (rd_max_utility[i] <= max_utility[i]) {
-                    cout << std::setprecision(pre) << rd_max_utility[i] / max_utility[i] << "\n";
-                    //myfile << std::setprecision(pre)  << rd_max_utility[i]/max_utility[i] << "\n";
-                    int_gap = int_gap + (rd_max_utility[i] / max_utility[i]);
+
+
+            if (iter == (num_iter_exp - 1)) {
+
+                myfile2 << "rd max util " << " | " << "max_utility" << "\n";
+                cout << "rd max util " << " | " << "max_utility" << "\n";
+
+                for (int i = 0; i < num_bidders; ++i) {
+                        myfile2 << rd_max_utility[i] << " | " << max_utility[i] << "\n";
+                        cout << rd_max_utility[i] << " | " << max_utility[i] << "\n";
+
                 }
 
+                myfile2 << "\n";
 
-                /*if(rd_max_utility[i] > max_utility[i]){
-                    cout << std::setprecision(pre)  << max_utility[i]/rd_max_utility[i] << "\n";
-                    //myfile << std::setprecision(pre)  << max_utility[i]/rd_max_utility[i] << "\n";
-                    int_gap = int_gap + (max_utility[i]/rd_max_utility[i]);
-                }*/
-
-
-                print_int_gap = int_gap;
-                if (i == (num_bidders - 1)) {
-                    avg_int_gap = print_int_gap; // /num_bidders;
-                }
-                int_gap = 0.0;
-                rd_util = 0.0;
             }
 
 
@@ -397,27 +408,9 @@ int main() {
         }
 
 
-        if (iter == ( num_iter_exp - 1)) {
-            for (int i = 0; i < num_bidders; ++i) {
-                if (rd_max_utility[i] <= max_utility[i]) {
-                    myfile2 << rd_max_utility[i] << " | " << max_utility[i] << "\n";
-                }
-            }
 
-            myfile2 << "\n";
-
-           /* //unnötig, weil opt immer besser als rounded solution
-            for (int i = 0; i < num_bidders; ++i) {
-                myfile2 << rd_max_utility[i] << " | " << max_utility[i] << "\n";
-            }
-*/
-        }
-
-
-    }
 
     return 0;
-
 
 
 }
