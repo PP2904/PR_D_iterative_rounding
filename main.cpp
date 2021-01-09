@@ -147,6 +147,7 @@ int main() {
         }
 
 
+        //Attention: PR Dynamics wird hier berechnet
         vector<double> prices(num_goods);
         for (int it = 0; it < num_iterations; ++it) {
 
@@ -185,61 +186,12 @@ int main() {
 
         }
 
-        //von Max utility und utility (im equilibrium sind diese gleich)
-
-        vector<double> utility(num_bidders);
-        vector<double> max_utility(num_bidders);
-
-        vector<double> rd_max_utility(num_bidders);
-
-        for (int b = 0; b < num_bidders; ++b) {
-            max_utility[b] = 0;
-            for (int i = 0; i < num_goods; ++i) {
-                utility[b] += bidders[b].valuation[i] * bidders[b].spent[i] / prices[i]; //Aufpassen wenn prices[i] = 0!
-                if (max_utility[b] < bidders[b].valuation[i] / prices[i]) {
-                    max_utility[b] = bidders[b].valuation[i] / prices[i];
-                }
-            }
-
-            max_utility[b] *= bidders[b].budget;
-        }
-
-        // save utility from start
-        vector<double> val_start(num_bidders);
-        for (int b = 0; b < num_bidders; ++b) {
-            for (int i = 0; i < num_goods; ++i) {
-                val_start[b] = bidders[b].valuation[i];
-            }
-        }
 
 
-
-        //Optimales Ergebnis//
-
-        cout << endl;
-        cout << "Fraktionales/optimales Ergebnis: ";
-        cout << endl;
-        for (int j = 0; j < num_goods; ++j) {
-            double demand = 0;
-            double supply = 0;
-            for (int i = 0; i < bidders.size(); ++i) {
-                demand += bidders[i].spent[j] / prices[j];
-            }
-            //cout << "Demand: " << demand << endl;
-            //cout << "Supply: " << prices[j] << endl;
-        }
 
         //set precision
         int pre = 3;
 
-
-        //macht das Sinn? Summe der Max_utils?
-        //double max_util = 0;
-
-        for (int i = 0; i < num_bidders; ++i) {
-            cout << "Max Utility: " << max_utility[i] << std::setprecision(pre) << endl;
-            //max_util = max_util + max_utility[i];
-        }
 
 
 
@@ -250,24 +202,24 @@ int main() {
         for (int i = 0; i < num_bidders; ++i) {
             for (int j = 0; j < num_goods; ++j) {
 
-                double alloc = bidders[i].spent[j] / prices[j];
+                double allocItem = bidders[i].spent[j] / prices[j];
 
-                if (alloc <= 0.01) {
-                    alloc = 0.0;
+                //attention: jetzt gibt es keine Werte unter 0.01 und übe
+                if (allocItem <= 0.01) {
+                    allocItem = 0.0;
                 }
 
-                if (alloc > 1) {
-                    alloc = 1.0;
+                if (allocItem > 1) {
+                    allocItem = 1.0;
                 }
 
-                graph[i][j] = alloc;
+                graph[i][j] = allocItem;
             }
         }
 
-        //attention: jetzt gibt es keine Werte unter 0.01 und über 1
 
-      //  double frac = 0;
-
+        //das ist graph * quant pro gut und bidder
+        vector<vector<double>> allocQuant(num_bidders, vector<double>(num_goods));
 
 
 
@@ -276,11 +228,14 @@ int main() {
 
         for (int i = 0; i < num_bidders; ++i) {
             for (int j = 0; j < num_goods; ++j) {
-                if ((quantItem * (graph[i][j])) < 0.001) {
+
+                allocQuant[i][j] = quantItem * graph[i][j];
+
+                if (allocQuant[i][j] < 0.001) {
                     graph[i][j] = 0;
                 }
 
-                fracVec[j] += ((quantItem * (graph[i][j])) - floor(quantItem * (graph[i][j])));
+                fracVec[j] += allocQuant[i][j] - floor(allocQuant[i][j]);
 
             }
         }
@@ -288,125 +243,149 @@ int main() {
 
 
 
-            //sortiere höchste valuation für jeweiliges gut raus
-            cout << "\n";
-            cout << "Höchste Valuation pro Gut (Achtung: Bidder werden ab 0 gezählt) \n ";
+        //sortiere höchste valuation für jeweiliges gut raus
+        cout << "\n";
+        cout << "Höchste Valuation pro Gut (Achtung: Bidder werden ab 0 gezählt) \n ";
 
-            vector<pair<int, int> > vecPair(num_goods);
+        vector<pair<int, int> > vecPair(num_goods);
 
-            //höchste Valuation für jeweils ein Gut = Entscheidung wem die fraktionalen Teilen eines Guts
-            // zugewiesen werden
+        //höchste Valuation für jeweils ein Gut = Entscheidung wem die fraktionalen Teilen eines Guts
+        // zugewiesen werden
 
-            int greatest_val = 0;
+        int greatest_val = 0;
 
 
-            //attention: berechnen hier die höchste valuation für ein gut (und den dazugehörigen bidder)
-            for (int i = 0; i < num_goods; ++i) {
-                for (int b = 0; b < num_bidders; ++b) {
-                    if (bidders[b].valuation[i] >= greatest_val) {
-                        greatest_val = bidders[b].valuation[i];
-                        vecPair[i] = make_pair(greatest_val, b);
-                    }
-
+        //attention: berechnen hier die höchste valuation für ein gut (und den dazugehörigen bidder)
+        for (int i = 0; i < num_goods; ++i) {
+            for (int b = 0; b < num_bidders; ++b) {
+                if (bidders[b].valuation[i] >= greatest_val) {
+                    greatest_val = bidders[b].valuation[i];
+                    vecPair[i] = make_pair(greatest_val, b);
                 }
-                cout << "(" << vecPair[i].first << "," << vecPair[i].second << ")";
-                cout << " | ";
-                greatest_val = 0;
+
             }
-            cout << endl;
+            cout << "(" << vecPair[i].first << "," << vecPair[i].second << ")";
+            cout << " | ";
+            greatest_val = 0;
+        }
+        cout << endl;
 
 
 
-            //Attention: Initialisiere mit integraler Allokation
-            /*up_integral := die integralen Ergebnisse, nachdem die fraktionalen Teile den jeweiligen Biddern
-            zugeteilt wurden */
+        //Attention: Initialisiere mit integraler Allokation
+        /*up_integral := die integralen Ergebnisse, nachdem die fraktionalen Teile den jeweiligen Biddern
+        zugeteilt wurden */
 
-            vector<vector<int>> up_integral(num_bidders, vector<int>(num_goods));
+        vector<vector<double>> up_integral(num_bidders, vector<double>(num_goods));
 
+
+        for (int i = 0; i < num_bidders; ++i) {
+            for (int j = 0; j < num_goods; ++j) {
+
+                up_integral[i][j] = floor(allocQuant[i][j]);
+
+                //attention: weise summe fraktionaler teile dem bidder mit höchster valuation zu (für bestimments gut)
+
+                if ((vecPair[j].second) == i) {
+                   // up_integral[i][j] += quantItem * fracVec[j];
+                    up_integral[i][j] += fracVec[j];
+                }
+
+
+            }
+        }
+
+        cout << "\n";
+        cout << "\n";
+        cout << "Optimale Allokation: \n";
+        /*** print graph ***/
+        for (int i = 0; i < num_bidders; ++i) {
+            for (int j = 0; j < num_goods; ++j) {
+                if (allocQuant[i][j] < 0.001) {
+                    graph[i][j] = 0;
+                }
+                cout << allocQuant[i][j] << " ";
+            }
+            cout << " | ";
+        }
+        cout << "\n";
+
+        //neue Allokation nach dem Runden der Allokationen:
+        cout << "\n";
+        cout << "Update integrale (gerundete) Allokation: \n";
+        for (int i = 0; i < num_bidders; ++i) {
+            for (int j = 0; j < num_goods; ++j) {
+                cout << up_integral[i][j] << " ";
+            }
+            cout << " | ";
+        }
+        cout << endl;
+
+
+
+        vector<double> max_utility(num_bidders);
+
+        for (int i = 0; i < num_bidders; ++i) {
+            for (int j = 0; j < num_goods; ++j) {
+
+                max_utility[i] += allocQuant[i][j] * bidders[i].valuation[j];
+
+            }
+        }
+
+
+    /*    //for debugging
+        for (int i = 0; i < num_bidders; ++i) {
+            cout << "Max Utility: " << max_utility[i] << std::setprecision(pre) << endl;
+        }
+*/
+
+        vector<double> rd_max_utility(num_bidders);
+        double rd_util;
+
+        for (int i = 0; i < num_bidders; ++i) {
+            rd_util = 0.0;
+            for (int j = 0; j < num_goods; ++j) {
+                rd_util += (up_integral[i][j] * bidders[i].valuation[j]);
+            }
+            rd_max_utility[i] = rd_util;
+        }
+
+
+        cout << "\n";
+
+        if (iter == (num_iter_exp - 1)) {
+
+            myfile2 << "rd max util " << " | " << "max_utility" << "\n";
+            cout << "rd max util " << " | " << "max_utility" << "\n";
 
             for (int i = 0; i < num_bidders; ++i) {
-                for (int j = 0; j < num_goods; ++j) {
-                    up_integral[i][j] = floor(quantItem * (graph[i][j]));
+                myfile2 << rd_max_utility[i] << " | " << max_utility[i] << "\n";
+                cout << rd_max_utility[i] << " | " << max_utility[i] << "\n";
 
-                    //attention: weise summe fraktionaler teile dem bidder mit höchster valuation zu (für bestimments gut)
-
-                    if(vecPair[j].second == i){
-                        up_integral[i][j] += fracVec[j];
-                    }
-
-
-                }
             }
 
+            myfile2 << "\n";
             cout << "\n";
-            cout << "\n";
-            cout << "Optimale Allokation: \n";
-            /*** print graph ***/
-            for (int i = 0; i < num_bidders; ++i) {
-                for (int j = 0; j < num_goods; ++j) {
-                    if ((quantItem * (graph[i][j])) < 0.001) {
-                        graph[i][j] = 0;
-                    }
-                    cout << quantItem * (graph[i][j]) << " ";
-                }
-                cout << " | ";
-            }
-            cout << "\n";
-
-            //neue Allokation nach dem Runden der Allokationen:
-            cout << "\n";
-            cout << "Update integrale (gerundete) Allokation: \n";
-            for (int i = 0; i < num_bidders; ++i) {
-                for (int j = 0; j < num_goods; ++j) {
-                    cout << up_integral[i][j] << " ";
-                }
-                cout << " | ";
-            }
-            cout << endl;
-
-
-
-            double rd_util = 0.0;
-
-            for (int i = 0; i < num_bidders; ++i) {
-                for (int j = 0; j < num_goods; ++j) {
-                    rd_util = rd_util + (((up_integral[i][j]) / quantItem) * bidders[i].valuation[j]);
-                }
-                rd_max_utility[i] = rd_util;
-            }
-
-
-
-
-            if (iter == (num_iter_exp - 1)) {
-
-                myfile2 << "rd max util " << " | " << "max_utility" << "\n";
-                cout << "rd max util " << " | " << "max_utility" << "\n";
-
-                for (int i = 0; i < num_bidders; ++i) {
-                        myfile2 << rd_max_utility[i] << " | " << max_utility[i] << "\n";
-                        cout << rd_max_utility[i] << " | " << max_utility[i] << "\n";
-
-                }
-
-                myfile2 << "\n";
-
-            }
-
-
-            auto end = std::chrono::system_clock::now();
-
-            std::chrono::duration<double> elapsed_seconds = end - start;
-            std::time_t end_time = std::chrono::system_clock::to_time_t(end);
-
-            if (iter == (num_iter_exp - 1)) {
-                cout << "finished computation at " << std::ctime(&end_time)
-                     << "elapsed time: " << elapsed_seconds.count() << "s\n";
-            }
-
 
         }
 
+
+        auto end = std::chrono::system_clock::now();
+
+        std::chrono::duration<double> elapsed_seconds = end - start;
+        std::time_t end_time = std::chrono::system_clock::to_time_t(end);
+
+        if (iter == (num_iter_exp - 1)) {
+            cout << "finished computation at " << std::ctime(&end_time)
+                 << "elapsed time: " << elapsed_seconds.count() << "s\n";
+        }
+
+
+    }
+
+
+    //TODO: es werden mehr Güter, als es nach Quantität gibt, verteilt.
 
 
 
