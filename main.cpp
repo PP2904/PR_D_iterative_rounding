@@ -286,9 +286,10 @@ int main() {
 
                 //attention: weise summe fraktionaler teile dem bidder mit höchster valuation zu (für bestimments gut)
 
-                if ((vecPair[j].second) == i) {
+                if ((vecPair[j].second) == i && bidders[i].budget >= fracVec[j] * prices[j]) {
                    // up_integral[i][j] += quantItem * fracVec[j];
                     up_integral[i][j] += fracVec[j];
+                    bidders[i].budget -= fracVec[j] * prices[j];
                 }
 
 
