@@ -130,7 +130,7 @@ int main() {
 
     myfile2 << "Number Goods: " << num_goods << ", " << " Number Bidders: " << num_bidders << ", "
             << " Number Iterations: " << num_iterations << ", " << " Quantity per item: " << quantItem << "\n";
-    myfile2 << "integral util | fractional util" << "\n";
+    myfile2 << "bidder budgets: " << "\n";
 
     //FOR SCHLEIFE FÜR ANZAHL WIEDERHOLUNGEN DES GESAMTEXPERIMENTS
     for (int iter = 1; iter < num_iter_exp; iter++) {
@@ -142,9 +142,24 @@ int main() {
             bidders[k].valuation.resize(num_goods);
             //valuation pro Gut und Bidder
             for (auto &v: bidders[k].valuation) v = (random_number(1, 11) + random_number(1, 15)) * i;
-            bidders[k].budget = random_number(1, 11) + random_number(1, 31);
+
+            //attention: was passiert wenn ein bidder nicht genug budget bekommt um sich alle Güter zu leisten?
+            if(k == 1){
+                bidders[k].budget = 2;
+            }
+            else{
+                bidders[k].budget = random_number(1, 11) + random_number(1, 31);
+            }
+
+            //attention: keine beschränkung des budgets
+            //bidders[k].budget = random_number(1, 11) + random_number(1, 31);
+
+            myfile2 << bidders[k].budget << " | ";
+
             bidders[k].spent.resize(num_goods, bidders[0].budget / (double) num_goods);
         }
+
+        myfile2 << "\n";
 
 
         //Attention: PR Dynamics wird hier berechnet
