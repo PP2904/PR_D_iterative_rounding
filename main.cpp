@@ -143,16 +143,16 @@ int main() {
             //valuation pro Gut und Bidder
             for (auto &v: bidders[k].valuation) v = (random_number(1, 11) + random_number(1, 15)) * i;
 
-            //attention: was passiert wenn ein bidder nicht genug budget bekommt um sich alle Güter zu leisten?
+         /*   //attention: was passiert wenn ein bidder nicht genug budget bekommt um sich alle Güter zu leisten?
             if(k == 1){
                 bidders[k].budget = 2;
             }
             else{
                 bidders[k].budget = random_number(1, 11) + random_number(1, 31);
             }
-
+*/
             //attention: keine beschränkung des budgets
-            //bidders[k].budget = random_number(1, 11) + random_number(1, 31);
+            bidders[k].budget = random_number(1, 11) + random_number(1, 31);
 
             myfile2 << bidders[k].budget << " | ";
 
